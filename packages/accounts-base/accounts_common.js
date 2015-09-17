@@ -12,15 +12,19 @@ AccountsCommon = class AccountsCommon {
     // Currently this is read directly by packages like accounts-password
     // and accounts-ui-unstyled.
     this._options = {};
+    options = options || {};
 
     // Note that setting this.connection = null causes this.users to be a
     // LocalCollection, which is not what we want.
     this.connection = undefined;
-    this._initConnection(options || {});
+    this._initConnection(options);
+
+    // Allows for configuring the collection name using settings.json.
+    this.usersCollectionName = Meteor.settings.public.usersCollectionName || "users";
 
     // There is an allow call in accounts_server.js that restricts writes to
     // this collection.
-    this.users = new Mongo.Collection("users", {
+    this.users = new Mongo.Collection(this.usersCollectionName, {
       _preventAutopublish: true,
       connection: this.connection
     });
