@@ -1605,6 +1605,7 @@ _.extend(Isopack.prototype, {
       /^tools\/meteor-services\/[^\/]+\.js$/,
       /^tools\/tool-testing\/[^\/]+\.js$/,
       /^tools\/console\/[^\/]+\.js$/,
+      /^tools\/cordova\/[^\/]+\.js$/,
       // We don't support running self-test from an install anymore
     ];
 
@@ -1742,6 +1743,26 @@ _.extend(Isopack.prototype, {
     var watchSet = self.pluginWatchSet.clone();
     _.each(self.unibuilds, function (unibuild) {
       watchSet.merge(unibuild.watchSet);
+    });
+    return watchSet;
+  }),
+
+  getClientWatchSet: Profile("Isopack#getClientWatchSet", function () {
+    var watchSet = this.pluginWatchSet.clone();
+    _.each(this.unibuilds, function (unibuild) {
+      if (/^web\./.test(unibuild.arch)) {
+        watchSet.merge(unibuild.watchSet);
+      }
+    });
+    return watchSet;
+  }),
+
+  getServerWatchSet: Profile("Isopack#getServerWatchSet", function () {
+    var watchSet = this.pluginWatchSet.clone();
+    _.each(this.unibuilds, function (unibuild) {
+      if (! /^web\./.test(unibuild.arch)) {
+        watchSet.merge(unibuild.watchSet);
+      }
     });
     return watchSet;
   }),
